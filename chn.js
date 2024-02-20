@@ -1,16 +1,23 @@
 const axios = require("axios");
 
-async function getjokecategories() {
-  try {
-    const response = await axios.get(
-      "https://api.chucknorris.io/jokes/categories"
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Baj van fater:", error);
-    return [];
-  }
-}
+const kategórianevek = {
+  animal: { hunname: "állatok" },
+  career: { hunname: "karrier" },
+  celebrity: { hunname: "híresség" },
+  dev: { hunname: "fejlesztő" },
+  explicit: { hunname: "kifejezett" },
+  fashion: { hunname: "divat" },
+  food: { hunname: "ételek" },
+  history: { hunname: "történelem" },
+  money: { hunname: "pénz" },
+  movie: { hunname: "film" },
+  music: { hunname: "zene" },
+  political: { hunname: "politikai" },
+  religion: { hunname: "vallás" },
+  science: { hunname: "tudomány" },
+  sport: { hunname: "sport" },
+  travel: { hunname: "utazás" },
+};
 
 async function getjokefromcategory(category) {
   try {
@@ -25,11 +32,9 @@ async function getjokefromcategory(category) {
 }
 
 async function getrandomjoke() {
-  const categories = await getjokecategories();
-
   console.log("Itt vannak a Chuck Norris vicckategóriák:");
-  categories.forEach((category, index) => {
-    console.log(`${index + 1}. ${category}`);
+  Object.keys(kategórianevek).forEach((category, index) => {
+    console.log(`${index + 1}. ${kategórianevek[category].hunname}`);
   });
 
   const readline = require("readline").createInterface({
@@ -40,15 +45,23 @@ async function getrandomjoke() {
   readline.question("Válassz egyet: ", async (válkategóriaindex) => {
     readline.close();
     const kategóriaindex = parseInt(válkategóriaindex) - 1;
-    const válkategória = categories[kategóriaindex];
+    const kategóriák = Object.keys(kategórianevek);
+    const válkategória = kategóriák[kategóriaindex];
 
-    if (isNaN(kategóriaindex) || kategóriaindex < 0 || kategóriaindex >= 17) {
+    if (
+      isNaN(kategóriaindex) ||
+      kategóriaindex < 0 ||
+      kategóriaindex >= kategóriák.length
+    ) {
       console.log("Rossz a bemenet. Csak számot válassz a felsoroltak közül.");
       return;
     }
-    const joke = await getjokefromcategory(válkategória);
-    if (joke) {
-      console.log(`Itt egy vicc a kategóriádból '${válkategória}':`, joke);
+    const vicc = await getjokefromcategory(válkategória);
+    if (vicc) {
+      console.log(
+        `Itt egy vicc a kategóriádból '${kategórianevek[válkategória].hunname}':`,
+        vicc
+      );
     } else {
       console.log("Nincs vicc bocsi");
     }
